@@ -44,7 +44,6 @@ static void printUsage(void) {
 
 int main(int argc, char ** argv) {
     int             i, j;
-    int             error = 0;
     uint32_t        numIterations = 3;
     int32_t         fileLength;
     char *          arg;
@@ -120,15 +119,11 @@ int main(int argc, char ** argv) {
 
     fclose(fptr);
 
-    if (error == 0) {
-        error = remove(pszInputFilename);
-
-        if (error) {
-            fprintf(stderr, "Failed to delete file %s: %s\n", pszInputFilename, strerror(errno));
-        }
+    if (remove(pszInputFilename)) {
+        fprintf(stderr, "Failed to delete file %s: %s\n", pszInputFilename, strerror(errno));
     }
 
     free(pszInputFilename);
 
-    return error;
+    return 0;
 }
