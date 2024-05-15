@@ -27,7 +27,14 @@
 #define MAX_ITERATIONS                      128
 #define DECIMAL                             10
 
+static const char * pszWarranty = 
+"\tsrm Copyright (C) 2024 Guy Wilson\n" \
+"\tThis program comes with ABSOLUTELY NO WARRANTY.; for details type `srm --help'.\n" \
+"\tThis is free software, and you are welcome to redistribute it\n" \
+"\tunder certain conditions; See the LICENCE file for details.\n\n";
+
 static void printUsage(void) {
+    printf("%s", pszWarranty);
 	printf("Using srm (secure remove):\n");
     printf("    srm --help (show this help)\n");
     printf("    srm [options]\n");
