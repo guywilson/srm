@@ -43,14 +43,12 @@ static void printUsage(void) {
 }
 
 int main(int argc, char ** argv) {
-    int             i = 0;
+    int             i, j;
     int             error = 0;
     uint32_t        numIterations = 3;
     int32_t         fileLength;
-    size_t          bytesRead = 0;
     char *          arg;
     char *          pszInputFilename;
-    uint8_t *       buffer;
     uint8_t         b = 0x00;
     FILE *          fptr;
 
@@ -98,21 +96,17 @@ int main(int argc, char ** argv) {
     fileLength = ftell(fptr);
     fseek(fptr, 0L, SEEK_SET);
 
-    buffer = (uint8_t *)malloc(fileLength);
-
     for (i = 0;i < (int)numIterations;i++) {
-        bytesRead = fread(buffer, 1, fileLength, fptr);
+        printf("Writing 0x%02X to %s\n", b, pszInputFilename);
 
-        if (bytesRead < fileLength) {
-            fprintf(stderr, "Failed to read the whole file, read %lu bytes, aborting...\n", bytesRead);
-            error = -1;
-            break;
+        for (j = 0;j < (int)fileLength;j++) {
+            if (fputc(b, fptr) == EOF) {
+                fprintf(stderr, "Error writing 0x%02X to %s:%s\n", b, pszInputFilename, strerror(errno));
+                fclose(stdout);
+                free(pszInputFilename);
+                return -1;
+            }
         }
-
-        fseek(fptr, 0L, SEEK_SET);
-
-        memset(buffer, b, fileLength);
-        fwrite(buffer, 1, fileLength, fptr);
 
         fseek(fptr, 0L, SEEK_SET);
 
@@ -125,7 +119,6 @@ int main(int argc, char ** argv) {
     }
 
     fclose(fptr);
-    free(buffer);
 
     if (error == 0) {
         error = remove(pszInputFilename);
